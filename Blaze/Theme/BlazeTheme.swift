@@ -11,10 +11,29 @@ enum BlazeTheme {
     static let success = Color(hex: "4CAF50")
 
     static let iconWeight: Font.Weight = .medium
-    static let symbolConfig = Image.SymbolConfiguration(weight: .medium)
+    #if canImport(UIKit) && !os(watchOS)
+    static let symbolConfig = UIImage.SymbolConfiguration(weight: .medium)
+    #endif
 
     static let cardRadius: CGFloat = 16
     static let smallRadius: CGFloat = 10
+
+    // Gradients
+    static let fireGradient = LinearGradient(
+        colors: [Color(hex: "FF6B35"), Color(hex: "FF9F1C")],
+        startPoint: .topLeading,
+        endPoint: .bottomTrailing
+    )
+    static let darkGradient = LinearGradient(
+        colors: [Color(hex: "1A1A1A"), Color(hex: "0D0D0D")],
+        startPoint: .top,
+        endPoint: .bottom
+    )
+
+    // Shadow
+    static let cardShadowColor = Color.black.opacity(0.3)
+    static let cardShadowRadius: CGFloat = 8
+    static let cardShadowY: CGFloat = 4
 }
 
 extension Color {

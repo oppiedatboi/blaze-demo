@@ -3,6 +3,15 @@ import SwiftData
 
 struct StatsView: View {
     @Query(sort: \Habit.createdAt) private var habits: [Habit]
+    @State private var showCards = false
+    @State private var showHeatmap = false
+    @State private var progressValue: CGFloat = 0
+
+    private var todayCompletionRate: CGFloat {
+        guard !habits.isEmpty else { return 0 }
+        let completed = habits.filter(\.isCompletedToday).count
+        return CGFloat(completed) / CGFloat(habits.count)
+    }
 
     var body: some View {
         NavigationStack {
@@ -27,6 +36,9 @@ struct StatsView: View {
                 } else {
                     ScrollView {
                         VStack(spacing: 16) {
+                            // Progress ring
+                            todayProgressRing
+
                             overviewCards
                             habitBreakdown
                         }
@@ -39,31 +51,92 @@ struct StatsView: View {
             .navigationTitle("Stats")
             .navigationBarTitleDisplayMode(.large)
             .toolbarColorScheme(.dark, for: .navigationBar)
+            .onAppear {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    showCards = true
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    withAnimation(.spring(response: 0.8, dampingFraction: 0.7)) {
+                        progressValue = todayCompletionRate
+                    }
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    showHeatmap = true
+                }
+            }
         }
+    }
+
+    private var todayProgressRing: some View {
+        VStack(spacing: 8) {
+            ZStack {
+                Circle()
+                    .stroke(BlazeTheme.surfaceLight, lineWidth: 8)
+                    .frame(width: 100, height: 100)
+
+                Circle()
+                    .trim(from: 0, to: progressValue)
+                    .stroke(
+                        LinearGradient(
+                            colors: [BlazeTheme.accent, BlazeTheme.streak],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        style: StrokeStyle(lineWidth: 8, lineCap: .round)
+                    )
+                    .frame(width: 100, height: 100)
+                    .rotationEffect(.degrees(-90))
+
+                VStack(spacing: 2) {
+                    Text("\(Int(todayCompletionRate * 100))%")
+                        .font(.title3)
+                        .fontWeight(.bold)
+                        .foregroundStyle(BlazeTheme.textPrimary)
+                        .contentTransition(.numericText())
+
+                    Text("today")
+                        .font(.caption2)
+                        .foregroundStyle(BlazeTheme.textSecondary)
+                }
+            }
+        }
+        .padding(.vertical, 8)
     }
 
     private var overviewCards: some View {
         HStack(spacing: 12) {
             StatCard(
                 title: "Total Habits",
-                value: "\(habits.count)",
+                value: habits.count,
                 icon: "list.bullet",
-                color: BlazeTheme.accent
+                color: BlazeTheme.accent,
+                delay: 0
             )
+            .scaleEffect(showCards ? 1.0 : 0.9)
+            .opacity(showCards ? 1.0 : 0.0)
+            .animation(.spring(response: 0.4, dampingFraction: 0.7).delay(0), value: showCards)
 
             StatCard(
                 title: "Completions",
-                value: "\(habits.reduce(0) { $0 + $1.totalCompletions })",
+                value: habits.reduce(0) { $0 + $1.totalCompletions },
                 icon: "checkmark.circle.fill",
-                color: BlazeTheme.success
+                color: BlazeTheme.success,
+                delay: 0.1
             )
+            .scaleEffect(showCards ? 1.0 : 0.9)
+            .opacity(showCards ? 1.0 : 0.0)
+            .animation(.spring(response: 0.4, dampingFraction: 0.7).delay(0.1), value: showCards)
 
             StatCard(
                 title: "Best Streak",
-                value: "\(habits.map(\.longestStreak).max() ?? 0)",
+                value: habits.map(\.longestStreak).max() ?? 0,
                 icon: "flame.fill",
-                color: BlazeTheme.streak
+                color: BlazeTheme.streak,
+                delay: 0.2
             )
+            .scaleEffect(showCards ? 1.0 : 0.9)
+            .opacity(showCards ? 1.0 : 0.0)
+            .animation(.spring(response: 0.4, dampingFraction: 0.7).delay(0.2), value: showCards)
         }
     }
 
@@ -73,7 +146,7 @@ struct StatsView: View {
                 .font(.headline)
                 .foregroundStyle(BlazeTheme.textPrimary)
 
-            ForEach(habits) { habit in
+            ForEach(Array(habits.enumerated()), id: \.element.id) { index, habit in
                 HStack(spacing: 12) {
                     Image(systemName: habit.icon)
                         .font(.system(size: 18, weight: BlazeTheme.iconWeight))
@@ -88,9 +161,21 @@ struct StatsView: View {
                             .foregroundStyle(BlazeTheme.textPrimary)
 
                         HStack(spacing: 16) {
-                            Label("\(habit.currentStreak) current", systemImage: "flame.fill")
-                            Label("\(habit.longestStreak) best", systemImage: "trophy.fill")
-                            Label("\(habit.totalCompletions) total", systemImage: "checkmark")
+                            Label {
+                                AnimatedNumber(value: habit.currentStreak, font: .caption, color: BlazeTheme.textSecondary)
+                            } icon: {
+                                Image(systemName: "flame.fill")
+                            }
+                            Label {
+                                AnimatedNumber(value: habit.longestStreak, font: .caption, color: BlazeTheme.textSecondary)
+                            } icon: {
+                                Image(systemName: "trophy.fill")
+                            }
+                            Label {
+                                AnimatedNumber(value: habit.totalCompletions, font: .caption, color: BlazeTheme.textSecondary)
+                            } icon: {
+                                Image(systemName: "checkmark")
+                            }
                         }
                         .font(.caption)
                         .foregroundStyle(BlazeTheme.textSecondary)
@@ -98,7 +183,6 @@ struct StatsView: View {
 
                     Spacer()
 
-                    // Streak badge
                     if habit.currentStreak >= 3 {
                         HStack(spacing: 2) {
                             FlameIcon(isAnimating: true)
@@ -115,9 +199,14 @@ struct StatsView: View {
                 }
                 .padding(12)
                 .background(BlazeTheme.surface, in: RoundedRectangle(cornerRadius: BlazeTheme.cardRadius))
+                .scaleEffect(showCards ? 1.0 : 0.9)
+                .opacity(showCards ? 1.0 : 0.0)
+                .animation(
+                    .spring(response: 0.4, dampingFraction: 0.7).delay(0.3 + Double(index) * 0.1),
+                    value: showCards
+                )
             }
 
-            // Weekly heatmap
             if !habits.isEmpty {
                 weeklyGrid
             }
@@ -136,7 +225,7 @@ struct StatsView: View {
             let days = (0..<7).reversed().map { calendar.date(byAdding: .day, value: -$0, to: today)! }
 
             HStack(spacing: 6) {
-                ForEach(days, id: \.self) { day in
+                ForEach(Array(days.enumerated()), id: \.element) { index, day in
                     let completedCount = habits.filter { habit in
                         habit.completions.contains { calendar.startOfDay(for: $0.date) == day }
                     }.count
@@ -147,6 +236,11 @@ struct StatsView: View {
                         RoundedRectangle(cornerRadius: 4)
                             .fill(ratio > 0 ? BlazeTheme.accent.opacity(0.3 + ratio * 0.7) : BlazeTheme.surfaceLight)
                             .frame(height: 32)
+                            .scaleEffect(y: showHeatmap ? 1.0 : 0.0, anchor: .bottom)
+                            .animation(
+                                .spring(response: 0.4, dampingFraction: 0.7).delay(Double(index) * 0.05),
+                                value: showHeatmap
+                            )
 
                         Text(day.formatted(.dateTime.weekday(.abbreviated)))
                             .font(.caption2)
@@ -164,9 +258,10 @@ struct StatsView: View {
 
 struct StatCard: View {
     let title: String
-    let value: String
+    let value: Int
     let icon: String
     let color: Color
+    var delay: Double = 0
 
     var body: some View {
         VStack(spacing: 8) {
@@ -174,10 +269,7 @@ struct StatCard: View {
                 .font(.system(size: 20, weight: BlazeTheme.iconWeight))
                 .foregroundStyle(color)
 
-            Text(value)
-                .font(.title2)
-                .fontWeight(.bold)
-                .foregroundStyle(BlazeTheme.textPrimary)
+            AnimatedNumber(value: value, font: .title2.bold(), color: BlazeTheme.textPrimary)
 
             Text(title)
                 .font(.caption2)

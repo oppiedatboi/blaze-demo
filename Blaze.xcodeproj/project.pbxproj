@@ -22,6 +22,8 @@
 		AA000013 /* FlameIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000013 /* FlameIcon.swift */; };
 		AA000014 /* BlazeTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000014 /* BlazeTheme.swift */; };
 		AA000015 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BB000015 /* Assets.xcassets */; };
+		AA000016 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000016 /* OnboardingView.swift */; };
+		AA000017 /* AnimatedNumber.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000017 /* AnimatedNumber.swift */; };
 		AA000020 /* BlazeWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000020 /* BlazeWidget.swift */; };
 		AA000021 /* BlazeWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000021 /* BlazeWidgetBundle.swift */; };
 		AA000022 /* Habit.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000003 /* Habit.swift */; };
@@ -73,6 +75,8 @@
 		BB000013 /* FlameIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlameIcon.swift; sourceTree = "<group>"; };
 		BB000014 /* BlazeTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlazeTheme.swift; sourceTree = "<group>"; };
 		BB000015 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		BB000016 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		BB000017 /* AnimatedNumber.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedNumber.swift; sourceTree = "<group>"; };
 		BB000020 /* BlazeWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlazeWidget.swift; sourceTree = "<group>"; };
 		BB000021 /* BlazeWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlazeWidgetBundle.swift; sourceTree = "<group>"; };
 		BB000025 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -147,6 +151,8 @@
 				BB000011 /* ConfettiView.swift */,
 				BB000012 /* FoxMascot.swift */,
 				BB000013 /* FlameIcon.swift */,
+				BB000016 /* OnboardingView.swift */,
+				BB000017 /* AnimatedNumber.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -302,6 +308,8 @@
 				AA000012 /* FoxMascot.swift in Sources */,
 				AA000013 /* FlameIcon.swift in Sources */,
 				AA000014 /* BlazeTheme.swift in Sources */,
+				AA000016 /* OnboardingView.swift in Sources */,
+				AA000017 /* AnimatedNumber.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

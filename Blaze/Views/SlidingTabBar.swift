@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct SlidingTabBar: View {
     @Binding var selectedTab: Tab
@@ -8,14 +9,19 @@ struct SlidingTabBar: View {
         HStack(spacing: 0) {
             ForEach(Tab.allCases, id: \.self) { tab in
                 Button {
+                    let changed = selectedTab != tab
                     withAnimation(.spring(response: 0.35, dampingFraction: 0.7)) {
                         selectedTab = tab
                     }
+                    if changed {
+                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                    }
                 } label: {
                     VStack(spacing: 4) {
-                        Image(systemName: tab.icon)
+                        Image(systemName: selectedTab == tab ? tab.iconFilled : tab.icon)
                             .font(.system(size: 20, weight: BlazeTheme.iconWeight))
                             .symbolRenderingMode(.hierarchical)
+                            .contentTransition(.symbolEffect(.replace))
 
                         Text(tab.rawValue)
                             .font(.caption2)
