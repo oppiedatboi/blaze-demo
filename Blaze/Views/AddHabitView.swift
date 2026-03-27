@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import UIKit
 
 struct AddHabitView: View {
     @Environment(\.modelContext) private var context
@@ -8,6 +9,8 @@ struct AddHabitView: View {
     @State private var name = ""
     @State private var selectedIcon = "star.fill"
     @State private var selectedColor = "FF6B35"
+    @State private var iconBounce: String?
+    @State private var colorBounce: String?
 
     private let icons = [
         "star.fill", "heart.fill", "book.fill", "figure.run",
@@ -35,6 +38,8 @@ struct AddHabitView: View {
                                 .foregroundStyle(Color(hex: selectedColor))
                                 .frame(width: 80, height: 80)
                                 .background(Color(hex: selectedColor).opacity(0.15), in: RoundedRectangle(cornerRadius: 20))
+                                .animation(.spring(response: 0.3, dampingFraction: 0.6), value: selectedIcon)
+                                .animation(.spring(response: 0.3, dampingFraction: 0.6), value: selectedColor)
 
                             Text(name.isEmpty ? "New Habit" : name)
                                 .font(.title3)
@@ -68,6 +73,11 @@ struct AddHabitView: View {
                                 ForEach(icons, id: \.self) { icon in
                                     Button {
                                         selectedIcon = icon
+                                        UISelectionFeedbackGenerator().selectionChanged()
+                                        iconBounce = icon
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                            iconBounce = nil
+                                        }
                                     } label: {
                                         Image(systemName: icon)
                                             .font(.system(size: 22, weight: BlazeTheme.iconWeight))
@@ -85,6 +95,8 @@ struct AddHabitView: View {
                                                         lineWidth: 2
                                                     )
                                             )
+                                            .scaleEffect(iconBounce == icon ? 1.05 : (selectedIcon == icon ? 1.0 : 0.95))
+                                            .animation(.spring(response: 0.25, dampingFraction: 0.5), value: iconBounce)
                                     }
                                     .foregroundStyle(selectedIcon == icon ? Color(hex: selectedColor) : BlazeTheme.textSecondary)
                                 }
@@ -102,6 +114,11 @@ struct AddHabitView: View {
                                 ForEach(colors, id: \.self) { color in
                                     Button {
                                         selectedColor = color
+                                        UISelectionFeedbackGenerator().selectionChanged()
+                                        colorBounce = color
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                            colorBounce = nil
+                                        }
                                     } label: {
                                         Circle()
                                             .fill(Color(hex: color))
@@ -112,6 +129,8 @@ struct AddHabitView: View {
                                                         .strokeBorder(.white, lineWidth: 3)
                                                 }
                                             }
+                                            .scaleEffect(colorBounce == color ? 1.15 : 1.0)
+                                            .animation(.spring(response: 0.25, dampingFraction: 0.5), value: colorBounce)
                                     }
                                 }
                             }
@@ -125,13 +144,17 @@ struct AddHabitView: View {
             .toolbarColorScheme(.dark, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
-                        .foregroundStyle(BlazeTheme.textSecondary)
+                    Button("Cancel") {
+                        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                        dismiss()
+                    }
+                    .foregroundStyle(BlazeTheme.textSecondary)
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
                         let habit = Habit(name: name, icon: selectedIcon, colorHex: selectedColor)
                         context.insert(habit)
+                        UINotificationFeedbackGenerator().notificationOccurred(.success)
                         dismiss()
                     }
                     .fontWeight(.semibold)
@@ -140,7 +163,8 @@ struct AddHabitView: View {
                 }
             }
         }
-        .presentationDetents([.large])
+        .presentationDetents([.fraction(0.85)])
+        .presentationCornerRadius(28)
         .presentationBackground(BlazeTheme.background)
     }
 }

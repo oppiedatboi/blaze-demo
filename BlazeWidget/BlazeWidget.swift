@@ -8,7 +8,14 @@ struct BlazeStreakWidget: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: StreakProvider()) { entry in
             StreakWidgetView(entry: entry)
-                .containerBackground(Color(hex: "0D0D0D"), for: .widget)
+                .containerBackground(
+                    LinearGradient(
+                        colors: [Color(hex: "1A0A00"), Color(hex: "0D0D0D")],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    for: .widget
+                )
         }
         .configurationDisplayName("Streak Tracker")
         .description("See your habit streaks at a glance.")
@@ -94,14 +101,35 @@ struct StreakWidgetView: View {
 
     private var smallWidget: some View {
         VStack(alignment: .leading, spacing: 8) {
-            HStack(spacing: 4) {
-                Image(systemName: "flame.fill")
-                    .font(.system(size: 14, weight: .medium))
-                    .foregroundStyle(Color(hex: "FF6B35"))
-                Text("Blaze")
-                    .font(.caption)
-                    .fontWeight(.bold)
-                    .foregroundStyle(.white)
+            HStack {
+                HStack(spacing: 4) {
+                    Image(systemName: "flame.fill")
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundStyle(Color(hex: "FF6B35"))
+                    Text("Blaze")
+                        .font(.caption)
+                        .fontWeight(.bold)
+                        .foregroundStyle(.white)
+                }
+
+                Spacer()
+
+                // Mini fox head
+                ZStack {
+                    Circle()
+                        .fill(Color(hex: "FF6B35"))
+                        .frame(width: 18, height: 18)
+                    Circle()
+                        .fill(Color(hex: "FFF5EB"))
+                        .frame(width: 10, height: 8)
+                        .offset(y: 2)
+                    // Eyes
+                    HStack(spacing: 4) {
+                        Circle().fill(Color(hex: "2D1B0E")).frame(width: 2.5, height: 2.5)
+                        Circle().fill(Color(hex: "2D1B0E")).frame(width: 2.5, height: 2.5)
+                    }
+                    .offset(y: 0)
+                }
             }
 
             if entry.habits.isEmpty {
@@ -134,6 +162,18 @@ struct StreakWidgetView: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .strokeBorder(
+                    LinearGradient(
+                        colors: [Color(hex: "FF6B35").opacity(0.3), Color(hex: "FF9F1C").opacity(0.1)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 1
+                )
+                .padding(-16)
+        )
     }
 
     private var mediumWidget: some View {
@@ -199,5 +239,17 @@ struct StreakWidgetView: View {
                 }
             }
         }
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .strokeBorder(
+                    LinearGradient(
+                        colors: [Color(hex: "FF6B35").opacity(0.3), Color(hex: "FF9F1C").opacity(0.1)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 1
+                )
+                .padding(-16)
+        )
     }
 }
