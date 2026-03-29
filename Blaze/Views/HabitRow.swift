@@ -51,10 +51,14 @@ struct HabitRow: View {
 
             Spacer()
 
+            // Holographic badge for streaks >= 7
+            if habit.currentStreak >= 7 {
+                HolographicBadge(streak: habit.currentStreak)
+            }
+
             Button {
                 let wasCompleted = isCompleted
                 if wasCompleted {
-                    // Un-completion
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) {
                         completionScale = 0.9
                     }
@@ -67,7 +71,6 @@ struct HabitRow: View {
                     }
                     UIImpactFeedbackGenerator(style: .light).impactOccurred()
                 } else {
-                    // Completion
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) {
                         completionScale = 1.3
                         checkmarkOpacity = 1.0

@@ -6,6 +6,7 @@ struct StatsView: View {
     @State private var showCards = false
     @State private var showHeatmap = false
     @State private var progressValue: CGFloat = 0
+    @State private var isLoading = true
 
     private var todayCompletionRate: CGFloat {
         guard !habits.isEmpty else { return 0 }
@@ -18,10 +19,9 @@ struct StatsView: View {
             ZStack {
                 BlazeTheme.background.ignoresSafeArea()
 
-                if habits.isEmpty {
+                if habits.isEmpty && !isLoading {
                     VStack(spacing: 16) {
-                        FoxMascot()
-                            .frame(width: 140, height: 140)
+                        PitbullMascotView(pose: .sleeping, size: 140)
 
                         Text("No stats yet")
                             .font(.title3)
@@ -33,12 +33,29 @@ struct StatsView: View {
                             .foregroundStyle(BlazeTheme.textSecondary)
                     }
                     .padding(.bottom, 80)
+                } else if isLoading {
+                    ScrollView {
+                        VStack(spacing: 16) {
+                            RoundedRectangle(cornerRadius: BlazeTheme.cardRadius)
+                                .fill(BlazeTheme.surface)
+                                .frame(height: 120)
+                                .shimmer()
+
+                            HStack(spacing: 12) {
+                                ForEach(0..<3, id: \.self) { _ in
+                                    RoundedRectangle(cornerRadius: BlazeTheme.cardRadius)
+                                        .fill(BlazeTheme.surface)
+                                        .frame(height: 90)
+                                        .shimmer()
+                                }
+                            }
+                        }
+                        .padding()
+                    }
                 } else {
                     ScrollView {
                         VStack(spacing: 16) {
-                            // Progress ring
                             todayProgressRing
-
                             overviewCards
                             habitBreakdown
                         }
@@ -52,15 +69,20 @@ struct StatsView: View {
             .navigationBarTitleDisplayMode(.large)
             .toolbarColorScheme(.dark, for: .navigationBar)
             .onAppear {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    withAnimation(.easeOut(duration: 0.3)) {
+                        isLoading = false
+                    }
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
                     showCards = true
                 }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
                     withAnimation(.spring(response: 0.8, dampingFraction: 0.7)) {
                         progressValue = todayCompletionRate
                     }
                 }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
                     showHeatmap = true
                 }
             }
@@ -183,7 +205,9 @@ struct StatsView: View {
 
                     Spacer()
 
-                    if habit.currentStreak >= 3 {
+                    if habit.currentStreak >= 7 {
+                        HolographicBadge(streak: habit.currentStreak)
+                    } else if habit.currentStreak >= 3 {
                         HStack(spacing: 2) {
                             FlameIcon(isAnimating: true)
                                 .frame(width: 14, height: 14)

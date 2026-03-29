@@ -24,6 +24,10 @@
 		AA000015 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BB000015 /* Assets.xcassets */; };
 		AA000016 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000016 /* OnboardingView.swift */; };
 		AA000017 /* AnimatedNumber.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000017 /* AnimatedNumber.swift */; };
+		AA000040 /* PitbullMascot.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000040 /* PitbullMascot.swift */; };
+		AA000041 /* ShimmerModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000041 /* ShimmerModifier.swift */; };
+		AA000042 /* HolographicBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000042 /* HolographicBadge.swift */; };
+		AA000043 /* VoiceInputOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000043 /* VoiceInputOverlay.swift */; };
 		AA000020 /* BlazeWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000020 /* BlazeWidget.swift */; };
 		AA000021 /* BlazeWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000021 /* BlazeWidgetBundle.swift */; };
 		AA000022 /* Habit.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000003 /* Habit.swift */; };
@@ -77,6 +81,10 @@
 		BB000015 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BB000016 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		BB000017 /* AnimatedNumber.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedNumber.swift; sourceTree = "<group>"; };
+		BB000040 /* PitbullMascot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PitbullMascot.swift; sourceTree = "<group>"; };
+		BB000041 /* ShimmerModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShimmerModifier.swift; sourceTree = "<group>"; };
+		BB000042 /* HolographicBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HolographicBadge.swift; sourceTree = "<group>"; };
+		BB000043 /* VoiceInputOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceInputOverlay.swift; sourceTree = "<group>"; };
 		BB000020 /* BlazeWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlazeWidget.swift; sourceTree = "<group>"; };
 		BB000021 /* BlazeWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlazeWidgetBundle.swift; sourceTree = "<group>"; };
 		BB000025 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -153,6 +161,10 @@
 				BB000013 /* FlameIcon.swift */,
 				BB000016 /* OnboardingView.swift */,
 				BB000017 /* AnimatedNumber.swift */,
+				BB000040 /* PitbullMascot.swift */,
+				BB000041 /* ShimmerModifier.swift */,
+				BB000042 /* HolographicBadge.swift */,
+				BB000043 /* VoiceInputOverlay.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -310,6 +322,10 @@
 				AA000014 /* BlazeTheme.swift in Sources */,
 				AA000016 /* OnboardingView.swift in Sources */,
 				AA000017 /* AnimatedNumber.swift in Sources */,
+				AA000040 /* PitbullMascot.swift in Sources */,
+				AA000041 /* ShimmerModifier.swift in Sources */,
+				AA000042 /* HolographicBadge.swift in Sources */,
+				AA000043 /* VoiceInputOverlay.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -7,19 +7,46 @@ struct OnboardingView: View {
     @State private var dragOffset: CGFloat = 0
     @State private var showElements: [Bool] = [false, false, false]
 
-    private let pages: [(mascot: AnyView, title: String, subtitle: String)] = [
+    private let pages: [(mascotView: AnyView, title: String, subtitle: String)] = [
         (
-            AnyView(FoxMascotWaving()),
+            AnyView(PitbullMascotView(pose: .waving, size: 180)),
             "Track Your Habits",
             "Build daily routines and watch\nyour streaks grow over time"
         ),
         (
-            AnyView(FoxMascotFlame()),
+            AnyView(
+                ZStack {
+                    PitbullMascotView(pose: .running, size: 180)
+                    Image(systemName: "flame.fill")
+                        .font(.system(size: 32, weight: .bold))
+                        .foregroundStyle(
+                            LinearGradient(
+                                colors: [Color(hex: "FF9F1C"), Color(hex: "FF6B35"), Color(hex: "FF4444")],
+                                startPoint: .bottom,
+                                endPoint: .top
+                            )
+                        )
+                        .offset(y: -80)
+                }
+            ),
             "Build Streaks",
             "Stay consistent and keep your\nfire burning every single day"
         ),
         (
-            AnyView(FoxMascotCelebrating()),
+            AnyView(
+                ZStack {
+                    PitbullMascotView(pose: .celebrating, size: 180)
+                    ForEach(0..<5, id: \.self) { i in
+                        Image(systemName: "star.fill")
+                            .font(.system(size: CGFloat([10, 12, 8, 14, 10][i])))
+                            .foregroundStyle(Color(hex: "FFD700"))
+                            .offset(
+                                x: CGFloat([-50, 50, -35, 40, 0][i]),
+                                y: CGFloat([-60, -55, -30, -25, -75][i])
+                            )
+                    }
+                }
+            ),
             "Stay on Fire",
             "Widgets, reminders, and celebrations\nto keep you motivated"
         ),
@@ -66,7 +93,6 @@ struct OnboardingView: View {
             VStack {
                 Spacer()
 
-                // Page dots
                 HStack(spacing: 8) {
                     ForEach(0..<3, id: \.self) { index in
                         Circle()
@@ -77,7 +103,6 @@ struct OnboardingView: View {
                 }
                 .padding(.bottom, 20)
 
-                // CTA Button
                 Button {
                     if currentPage < 2 {
                         withAnimation(.spring(response: 0.4, dampingFraction: 0.75)) {
@@ -117,7 +142,7 @@ struct OnboardingView: View {
         VStack(spacing: 28) {
             Spacer()
 
-            pages[index].mascot
+            pages[index].mascotView
                 .frame(width: 200, height: 200)
                 .scaleEffect(showElements[index] ? 1.0 : 0.8)
                 .opacity(showElements[index] ? 1.0 : 0.0)
@@ -144,7 +169,6 @@ struct OnboardingView: View {
     }
 
     private func triggerPageAnimation() {
-        // Reset current page animation
         showElements[currentPage] = false
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
             showElements[currentPage] = true

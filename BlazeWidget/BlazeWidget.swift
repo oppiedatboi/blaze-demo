@@ -19,13 +19,15 @@ struct BlazeStreakWidget: Widget {
         }
         .configurationDisplayName("Streak Tracker")
         .description("See your habit streaks at a glance.")
-        .supportedFamilies([.systemSmall, .systemMedium])
+        .supportedFamilies([.systemSmall, .systemMedium, .accessoryCircular])
     }
 }
 
 struct StreakEntry: TimelineEntry {
     let date: Date
     let habits: [HabitSnapshot]
+    let totalStreaks: Int
+    let completionRate: Double
 }
 
 struct HabitSnapshot: Identifiable {
@@ -42,7 +44,7 @@ struct StreakProvider: TimelineProvider {
         StreakEntry(date: .now, habits: [
             HabitSnapshot(name: "Meditate", icon: "brain.head.profile", colorHex: "FF6B35", streak: 7, completedToday: true),
             HabitSnapshot(name: "Exercise", icon: "figure.run", colorHex: "4CAF50", streak: 3, completedToday: false),
-        ])
+        ], totalStreaks: 10, completionRate: 0.5)
     }
 
     func getSnapshot(in context: Context, completion: @escaping (StreakEntry) -> Void) {
@@ -76,9 +78,12 @@ struct StreakProvider: TimelineProvider {
                 )
             }
 
-            return StreakEntry(date: .now, habits: snapshots)
+            let totalStreaks = habits.reduce(0) { $0 + $1.currentStreak }
+            let completionRate = habits.isEmpty ? 0.0 : Double(habits.filter(\.isCompletedToday).count) / Double(habits.count)
+
+            return StreakEntry(date: .now, habits: snapshots, totalStreaks: totalStreaks, completionRate: completionRate)
         } catch {
-            return StreakEntry(date: .now, habits: [])
+            return StreakEntry(date: .now, habits: [], totalStreaks: 0, completionRate: 0)
         }
     }
 }
@@ -94,6 +99,8 @@ struct StreakWidgetView: View {
             smallWidget
         case .systemMedium:
             mediumWidget
+        case .accessoryCircular:
+            lockScreenWidget
         default:
             smallWidget
         }
@@ -114,22 +121,12 @@ struct StreakWidgetView: View {
 
                 Spacer()
 
-                // Mini fox head
-                ZStack {
-                    Circle()
-                        .fill(Color(hex: "FF6B35"))
-                        .frame(width: 18, height: 18)
-                    Circle()
-                        .fill(Color(hex: "FFF5EB"))
-                        .frame(width: 10, height: 8)
-                        .offset(y: 2)
-                    // Eyes
-                    HStack(spacing: 4) {
-                        Circle().fill(Color(hex: "2D1B0E")).frame(width: 2.5, height: 2.5)
-                        Circle().fill(Color(hex: "2D1B0E")).frame(width: 2.5, height: 2.5)
-                    }
-                    .offset(y: 0)
-                }
+                // Pitbull running mini
+                Image("blaze-pit-running")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 24, height: 24)
+                    .clipShape(Circle())
             }
 
             if entry.habits.isEmpty {
@@ -140,24 +137,16 @@ struct StreakWidgetView: View {
                 Spacer()
             } else {
                 Spacer()
-                ForEach(entry.habits.prefix(3)) { habit in
-                    HStack(spacing: 6) {
-                        Image(systemName: habit.icon)
-                            .font(.system(size: 10, weight: .medium))
-                            .foregroundStyle(Color(hex: habit.colorHex))
 
-                        Text("\(habit.streak)")
-                            .font(.caption2)
-                            .fontWeight(.bold)
-                            .foregroundStyle(Color(hex: "FF9F1C"))
+                Text("\(entry.totalStreaks)")
+                    .font(.title)
+                    .fontWeight(.heavy)
+                    .foregroundStyle(Color(hex: "FF9F1C"))
 
-                        if habit.completedToday {
-                            Image(systemName: "checkmark.circle.fill")
-                                .font(.system(size: 8))
-                                .foregroundStyle(Color(hex: "4CAF50"))
-                        }
-                    }
-                }
+                Text("total streak")
+                    .font(.caption2)
+                    .foregroundStyle(.white.opacity(0.6))
+
                 Spacer()
             }
         }
@@ -174,6 +163,7 @@ struct StreakWidgetView: View {
                 )
                 .padding(-16)
         )
+        .widgetURL(URL(string: "blaze://open"))
     }
 
     private var mediumWidget: some View {
@@ -203,7 +193,7 @@ struct StreakWidgetView: View {
                 .padding(.vertical, 8)
             } else {
                 HStack(spacing: 12) {
-                    ForEach(entry.habits.prefix(4)) { habit in
+                    ForEach(entry.habits.prefix(3)) { habit in
                         VStack(spacing: 6) {
                             ZStack {
                                 Circle()
@@ -251,5 +241,22 @@ struct StreakWidgetView: View {
                 )
                 .padding(-16)
         )
+        .widgetURL(URL(string: "blaze://open"))
+    }
+
+    private var lockScreenWidget: some View {
+        ZStack {
+            AccessoryWidgetBackground()
+
+            Circle()
+                .trim(from: 0, to: entry.completionRate)
+                .stroke(Color(hex: "FF6B35"), style: StrokeStyle(lineWidth: 3, lineCap: .round))
+                .rotationEffect(.degrees(-90))
+                .padding(3)
+
+            Text("\(Int(entry.completionRate * 100))%")
+                .font(.system(size: 12, weight: .bold))
+                .foregroundStyle(.white)
+        }
     }
 }

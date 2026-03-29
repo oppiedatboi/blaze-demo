@@ -14,11 +14,10 @@ struct SettingsView: View {
                 BlazeTheme.background.ignoresSafeArea()
 
                 List {
-                    // Fox mascot header
+                    // Pitbull mascot header
                     Section {
                         VStack(spacing: 12) {
-                            FoxMascot()
-                                .frame(width: 100, height: 100)
+                            PitbullMascotView(pose: .reading, size: 100)
 
                             VStack(spacing: 4) {
                                 Text("Blaze")
@@ -38,14 +37,13 @@ struct SettingsView: View {
 
                     Section("General") {
                         settingsRow(icon: "list.bullet", title: "Habits", detail: "\(habits.count)", index: 0)
-                        settingsRow(icon: "info.circle", title: "Version", detail: "2.0.0", index: 1)
+                        settingsRow(icon: "info.circle", title: "Version", detail: "3.0.0", index: 1)
                         settingsRow(icon: "iphone", title: "iOS Requirement", detail: "17.0+", index: 2)
                     }
 
                     Section("Actions") {
                         Button {
                             UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                            // Rate on App Store placeholder
                         } label: {
                             Label("Rate on App Store", systemImage: "star")
                                 .foregroundStyle(BlazeTheme.textPrimary)

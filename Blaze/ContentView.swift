@@ -56,9 +56,11 @@ struct ContentView: View {
                 HStack(spacing: 0) {
                     TodayView()
                         .frame(width: width)
+                        .id("today-\(selectedTab == .today)")
 
                     StatsView()
                         .frame(width: width)
+                        .id("stats-\(selectedTab == .stats)")
 
                     SettingsView()
                         .frame(width: width)
